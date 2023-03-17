@@ -22,7 +22,8 @@ def add_user() -> str:
 
     try:
         user = AUTH.register_user(email, password)
-        return jsonify({"email": "{}".format(user.email), "message": "user created"})
+        return jsonify({"email": "{}".format(user.email),
+                        "message": "user created"})
     except ValueError:
         return jsonify({"message": "email already registered"}), 400
 
@@ -62,10 +63,9 @@ def profile() -> str:
     """
     session_id = request.cookies.get("session_id")
     user = AUTH.get_user_from_session_id(session_id)
-    if user:
-        return jsonify({"email": f"{user.email}"}), 200
-    abort(403)
-
+    if session_id is None or user is None:
+        abort(403)
+    return jsonify({"email": "{}".format(user.email)}), 200
 
 @app.route("/reset_password", methods=["POST"], strict_slashes=False)
 def get_reset_password_token() -> str:
@@ -73,12 +73,8 @@ def get_reset_password_token() -> str:
     email = request.form.get("email")
     try:
         reset_token = AUTH.get_reset_password_token(email)
-        return (
-            jsonify(
-                {"email": "{}".format(email), "reset_token": "{}".format(reset_token)}
-            ),
-            200,
-        )
+        return (jsonify({"email": "{}".format(email),
+                        "reset_token": "{}".format(reset_token)}), 200,)
     except ValueError:
         abort(403)
 
@@ -93,7 +89,8 @@ def update_password() -> str:
     try:
         AUTH.update_password(reset_token, new_password)
         return (
-            jsonify({"email": "{}".format(email), "message": "Password updated"}),
+            jsonify({"email": "{}".format(email),
+                     "message": "Password updated"}),
             200,
         )
     except ValueError:

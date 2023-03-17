@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Definition of user validation module function
+"""
 from db import DB
 from bcrypt import hashpw, gensalt, checkpw
 from user import User
