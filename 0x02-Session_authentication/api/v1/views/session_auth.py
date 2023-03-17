@@ -2,7 +2,7 @@
 """ Module of Users views
 """
 import os
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from api.v1.views import app_views
 from models.user import User
 
