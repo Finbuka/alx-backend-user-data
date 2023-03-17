@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from db import DB
 from bcrypt import hashpw, gensalt, checkpw
 from user import User
@@ -38,7 +39,7 @@ class Auth:
         try:
             user = self._db.find_user_by(email=email)
             password_bytes = password.encode("utf-8")
-            hashed_password_bytes = user.hashed_password.encode("utf-8")
+            hashed_password_bytes = user.hashed_password
             return checkpw(password_bytes, hashed_password_bytes)
         except Exception:
             return False
@@ -80,7 +81,14 @@ class Auth:
             raise ValueError
 
     def update_password(self, reset_token: str, password: str) -> None:
-        """The update password method"""
+        """
+        Updates a user's password
+        Args:
+            reset_token (str): reset_token issued to reset the password
+            password (str): user's new password
+        Return:
+            None
+        """
         try:
             user = self._db.find_user_by(reset_token=reset_token)
             hashed_password = _hash_password(password).decode("utf-8")
