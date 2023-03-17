@@ -6,21 +6,20 @@ from sqlalchemy.orm.exc import NoResultFound
 import uuid
 
 
-
-
 def _hash_password(password: str) -> bytes:
     """The hash_password function"""
-    password_bytes = password.encode('utf-8')
+    password_bytes = password.encode("utf-8")
     hashed_password = hashpw(password_bytes, gensalt())
     return hashed_password
+
 
 def _generate_uuid() -> str:
     """The Generate UUID function"""
     return str(uuid.uuid4())
 
+
 class Auth:
-    """Auth class to interact with the authentication database.
-    """
+    """Auth class to interact with the authentication database."""
 
     def __init__(self):
         self._db = DB()
@@ -32,14 +31,14 @@ class Auth:
             raise ValueError("User <{}> already exists".format(email))
         except NoResultFound as e:
             password = _hash_password(password)
-            return self._db.add_user(email,password)
-        
+            return self._db.add_user(email, password)
+
     def valid_login(self, email: str, password: str) -> bool:
         """The valid_login function"""
         try:
             user = self._db.find_user_by(email=email)
-            password_bytes = password.encode('utf-8')
-            hashed_password_bytes = user.hashed_password.encode('utf-8')
+            password_bytes = password.encode("utf-8")
+            hashed_password_bytes = user.hashed_password.encode("utf-8")
             return checkpw(password_bytes, hashed_password_bytes)
         except Exception:
             return False
@@ -84,10 +83,10 @@ class Auth:
         """The update password method"""
         try:
             user = self._db.find_user_by(reset_token=reset_token)
-            hashed_password = _hash_password(password).decode('utf-8')
-            self._db.update_user(user.id, hashed_password=hashed_password,
-                                 reset_token=None)
+            hashed_password = _hash_password(password).decode("utf-8")
+            self._db.update_user(
+                user.id, hashed_password=hashed_password, reset_token=None
+            )
             return None
         except NoResultFound:
             raise ValueError
-
